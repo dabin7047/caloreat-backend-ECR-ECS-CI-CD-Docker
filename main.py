@@ -1,4 +1,50 @@
+# from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from fastapi import FastAPI
+from app.db.database import Base, async_engine
+from app.db import models
+from app.routers import router
+
+#lifespan
+from contextlib import asynccontextmanager
+
+#env load
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=".env")
+
+#lifespan
+# 현재구조는 alembic과 충돌구조 - 개발편의성
+# lifespan != migration(alembic)
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    async with async_engine.begin() as conn: #DB 연결 시작
+        await conn.run_sync(Base.metadata.create_all) #alembic migration적용후 삭제필요
+    yield #
+    await async_engine.dispose() #DB 연결 종료
+
+app=FastAPI(lifespan=lifespan)
+
+#라우터 등록
+app.include_router(router)
 
 
 
-#middleware 추가여부
+
+
+
+#미들웨어 등록 (front:intercept, 토큰보안 안정성)
+
+# # CORS 설정
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],  #모든 도메인요청 허용
+#     allow_credentials=True, #자격증명 true일경우에만 응답 노출
+#     allow_methods=["*"], #모든 http메소드 허용
+#     allow_headers=["*"],
+
+# )
+
+# # for check
+if __name__=="__main__":
+    uvicorn.run("main:app",host="localhost",port=8000,reload=True)

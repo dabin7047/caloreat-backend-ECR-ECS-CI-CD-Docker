@@ -6,7 +6,7 @@ from app.core.settings import settings
 async_engine = create_async_engine(settings.database_url, echo=False)
 
 # 비동기엔진 세션연결
-AsyncsessionLocal = sessionmaker(
+AsyncSessionLocal = sessionmaker(
     autocommit = False, autoflush=False, bind=async_engine, class_=AsyncSession
 )
 # 동기 엔진 (필요시)
@@ -17,7 +17,7 @@ Base=declarative_base()
 
 # get_db 
 async def get_db():
-    async with AsyncsessionLocal() as session:
+    async with AsyncSessionLocal() as session:
         try:
             yield session
             await session.commit()

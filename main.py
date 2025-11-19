@@ -1,6 +1,4 @@
-def main():
-    print("Hello from backend!")
 
 
-if __name__ == "__main__":
-    main()
+
+#middleware 추가여부

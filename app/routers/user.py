@@ -7,3 +7,14 @@ from app.services.user import register_user,login_user,delete_user,get_user, upd
 from typing import Annotated , List
 
 
+router = APIRouter(prefix="/users", tags=["User"])
+
+# signup
+# login
+
+# logout
+
+# getuser
+
+# delete_user or remove_user
+

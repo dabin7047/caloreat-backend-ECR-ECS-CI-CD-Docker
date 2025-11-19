@@ -20,7 +20,7 @@ load_dotenv(dotenv_path=".env")
 async def lifespan(app:FastAPI):
     async with async_engine.begin() as conn: #DB 연결 시작
         await conn.run_sync(Base.metadata.create_all) #alembic migration적용후 삭제필요
-    yield #
+    yield 
     await async_engine.dispose() #DB 연결 종료
 
 app=FastAPI(lifespan=lifespan)

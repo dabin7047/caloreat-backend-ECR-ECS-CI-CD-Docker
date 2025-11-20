@@ -1,107 +1,54 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
-from app.db.crud.user import UserCrud
-from app.db.schemas.user import UserCreate, UserUpdate
-from app.core.jwt_context import get_pwd_hash
-
-from datetime import datetime
-
-class UserService: 
-    #DB에서 해당 id의 사용자 조회 
-    @staticmethod
-    async def get_user(db:AsyncSession, user_id:int):
-        db_user=await UserCrud.get_id(db, user_id)
-        if not db_user:
-            raise HTTPException(status_code=404, detail="사용자 찾을 수 없다")
-        return db_user
-
-    #회원가입  
-    # user create 
-    @staticmethod
-    async def signup(db:AsyncSession, user:UserCreate):
-        #중복 username확인
-        if await UserCrud.get_username(db, user.username):
-            raise HTTPException(status_code=400,  detail="이미 사용중인 이름이다")
-        
-        #username없으면 -> username, password, email을 디비에 저장
-        hash_pw=await get_pwd_hash(user.password) #비번 해싱
-        user_create=UserCreate(username=user.username, password=hash_pw, email=user.email)
-
-        try:
-            db_user=await UserCrud.create(db,user_create)
-            await db.commit()
-            await db.refresh(db_user)
-            return db_user
-        
-        except Exception:
-            raise HTTPException(status_code=401, detail="잘못된 이메일 또는 비번이다")
-        
-    # user delete
-    async def delete_user(db: AsyncSession, user_id: int):
-        is_deleted = await UserCrud.delete_user(db, user_id)
-        if not is_deleted:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with id {user_id} not found."
-            )
-        return {"message": "User deleted successfully"}
-    
-    #user update    
-    async def update_user(db: AsyncSession, user_id: int ,user_data:UserUpdate):
-        hash_pw = None
-        if user_data.password:
-            hash_pw = get_pwd_hash(user_data.password)
-
-        updated_user = await UserCrud.update_user(
-            db,
-            user_id=user_id,
-            user_name=user_data.username,
-            email=user_data.email,
-            hash_pw=hash_pw
-        )
-
-        if not updated_user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with id {user_id} not Found"
-            )
-
-        return updated_user  
+from app.schemas.user import UserCreate, UserUpdate
+# from app.core.security import hash_password # security.py 파일 만든뒤 활성화
+from app.models.user import User
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 
-    # User Login
-    # # Login
-    # @staticmethod
-    # async def login(db: AsyncSession, user: UserLogin) -> tuple:
-    #     db_user = await UserCrud.get_email(db, user.email)
-    #     if not db_user or not await verify_pwd(user.password, db_user.password):
-    #         raise HTTPException(status_code=401, detail="잘못된 이메일 또는 비밀번호")
-        
+# email로 유저 조회
+def get_user_by_email(db: Session, email: str):
+    return db.scalar(select(User).where(User.email == email)) 
+    # scalar(select(...)) -> 결과 중 첫 번째(row 1개)를 가져오는 SQLAlchemy 방식
+    # DB : SELECT * FROM users WHERE email=:email LIMIT 1
 
-    #     refresh_token = create_refresh_token(db_user.user_id)
-    #     access_token = create_access_token(db_user.user_id)
+# id(PK)로 유저 조회
+def get_user_by_id(db: Session, id: int):
+    return db.get(User, id)
+    # db.get(Model, pk) -> pk기반 조회(가장 빠르고 기본적인 조회 방식)
 
-    #     updated_user = await UserCrud.update_refresh_token_id(db, db_user.user_id, refresh_token)
-    #     await db.commit()
-    #     await db.refresh(updated_user)
+# 회원가입 (비밀번호 해시 후 저장)
+def create_user(db: Session, user_in: UserCreate):
+    hashed_pw = user_in.password                  # 지금은 security.py파일이 없어 임시로 쓴다.
+    # hashed_pw = hash_password(user_in.password) # 만약에 security.py을 만든다면 이 코드를 쓴다.
 
-    #     return updated_user, access_token, refresh_token
+    user = User(
+        email=user_in.email,         # unique + NOT NULL
+        username=user_in.username,   # unique + NOT NULL
+        password_hash=hashed_pw,     # hash값 저장해야 함 (추후 security적용 해야함)
+        phone=user_in.phone,
+        nickname=user_in.nickname,
+        provider=user_in.provider    # 기본값 Email / 소셜 로그인도 가능
+    )
 
-    # version
-    # login  (username: phone, password:password 사용) / 
-  
-    # @staticmethod
-    # async def login(user:UserLogin, db:AsyncSession)-> tuple[User,str,str]:
-    #     db_user = await UserCrud.get_phone(user.phone,db)        
+    db.add(user)     # 세션에 저장 예약 (INSERT 준비)
+    db.commit()      # 실제 DB 반영 (commit 해야 INSERT 실행)
+    db.refresh(user) # commit 이후 생성된 id, create_at, ...값 불러오려면 refresh 필수
 
-        
-    #     #jwt token 
-    #     access_token = create_access_token(db_user.user_id)   
-    #     refresh_token = create_refresh_token(db_user.user_id)
+    return user
 
-    #     verified_staff= await UserCrud.update_refresh_token(db_user.user_id,
-    #                                                         refresh_token,db)
-    #     await db.commit()
-    #     await db.refresh(verified_staff)
-    #     return verified_staff, access_token, refresh_token
+# 회원정보 수정 (PATCH 방식)
+def update_user(db: Session, db_user: User, user_in: UserUpdate):
+    update_data = user_in.model_dump(exclude_unset=True)
+    # exclude_unset=True -> 사용자가 보낸 값만 추출 (부분 수정 가능)
 
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+
+    db.commit()         # 변경내용을 DB에 반영
+    db.refresh(db_user) # 갱신된 객체 다시 읽어오기 (DB 최신 상태)
+    return db_user
+
+# 회원 삭제
+def delete_user(db: Session, db_user: User):
+    db.delete(db_user)  # 세션에서 해당 객체 삭제 처리
+    db.commit()         # DB에서 실제 삭제 실행

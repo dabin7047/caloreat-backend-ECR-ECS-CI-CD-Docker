@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
-
+ 
 class Settings(BaseSettings):
     
     db_user: str = Field(..., alias="DB_USER")
@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         return f'postgresql+asyncpg://{self.tmp_db}'    # postgreSQL변경필요
     
-    # ai_model url
+    # # ai_model url
     # @property
     # def ai_model_url(self)->str:
     #     pass

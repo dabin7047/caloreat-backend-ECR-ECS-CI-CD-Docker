@@ -10,7 +10,7 @@ from app.core.auth import oauth2_scheme
 from app.core.auth import set_auth_cookies
 
 from app.services.user import UserService
-
+from app.db.crud.user import UserCrud
 
 from typing import Annotated , List
 

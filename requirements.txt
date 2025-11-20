@@ -1,4 +1,5 @@
 aiomysql==0.3.2
+asyncpg==0.30.0
 bcrypt==5.0.0
 fastapi==0.121.2
 h2==4.3.0
@@ -14,5 +15,5 @@ SQLAlchemy==2.0.44
 
 
 uvicorn==0.38.0
-wheel==0.45.1   # build tool : conda / uv 분리
+wheel==0.45.1
 

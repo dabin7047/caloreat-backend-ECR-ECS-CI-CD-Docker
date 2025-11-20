@@ -5,13 +5,14 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "aiomysql==0.3.2",
+    "aiomysql==0.3.2",          # MySQL async driver (PostgreSQL로 전환이면 제거 가능)
+    "asyncpg==0.30.0",          # PostgreSQL async driver
     "bcrypt==5.0.0",
     "fastapi==0.121.2",
-    "h2==4.3.0",    
+    "h2==4.3.0",
     "jwt==1.4.0",
     "passlib==1.7.4",
-    "pydantic-settings==2.12.0",    
-    "SQLAlchemy==2.0.44",    
-    "uvicorn==0.38.0",    
+    "pydantic-settings==2.12.0",
+    "SQLAlchemy==2.0.44",
+    "uvicorn==0.38.0", 
 ]

@@ -4,7 +4,7 @@ from app.db.database import Base, declarative_base
 
 #서버구동 test table (임시)
 
-Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "users"

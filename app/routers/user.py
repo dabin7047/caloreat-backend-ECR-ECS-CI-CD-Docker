@@ -20,8 +20,8 @@ router = APIRouter(prefix="/users", tags=["User"])
 
 # signup
 @router.post("/signup", response_model= UserRead)
-async def signup(user:UserCreate,db:AsyncSession=Depends(get_db)) -> User:
-    db_user = await UserService.register_user(db,user.username, user.email, user.password)
+async def sign_up(user:UserCreate,db:AsyncSession=Depends(get_db)) -> User:
+    db_user = await UserService.register_user(db, user.email, user.username, user.password)
     return db_user
 
 # #회원정보조회

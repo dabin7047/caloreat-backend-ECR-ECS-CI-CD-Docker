@@ -7,13 +7,13 @@ from typing import Optional
 
 # 기본 유저 정보 스키마
 class UserBase(BaseModel):
-    email : EmailStr                # 이메일 형식 자동 검증
-    username : str                  # 아이디 / 닉네임 개념
+    email : EmailStr                
+    username : str                  
     
 ### Request schema
 # 회원 가입용 스키마
-class UserCreate(UserBase):         # 윗스키마 UserBase 그대로 상속                                    
-    password : str                  # 사용자가 입력한 비밀번호 -> password  // 
+class UserCreate(UserBase):                                    
+    password : str                  
 
 # 회원 정보 수정용 스키마
 class UserUpdate(BaseModel):
@@ -47,11 +47,12 @@ class UserRead(UserInDB):
 class UserProfile():
     pass
 # user_health_condition (allergic, diabetes .. )
-# UserHealth / HealthCondition / MedicalCondition ㄴㄴ 니맘대로
-class UserHealth():
+# HealthCondition
+class HealthCondition():
     pass
 
-##### UserProfile / UeserHealth
+
+##### UserProfile / HealthCondition
     # nickname : Optional[str] = None        # 닉네임 선택입력 -> Null허용
     # nickname : Optional[str]            # 유저의 닉네임, 서비스에서 별칭을 따로 줄 수 있다면 사용
     # phone : Optional[str]               # 유저의 전화번호, 선택적으로 제공하지 않아도 됨

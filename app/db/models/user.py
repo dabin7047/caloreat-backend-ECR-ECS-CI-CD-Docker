@@ -1,41 +1,46 @@
-from sqlalchemy import ( Column, BigInteger, String, Integer, Date, DateTime, Boolean, Enum)
+from sqlalchemy import (
+    Column,
+    BigInteger,
+    String,
+    Integer,
+    Date,
+    DateTime,
+    Boolean,
+    Enum,
+)
 from sqlalchemy.sql import func
 from app.db.database import Base
 from datetime import datetime, timezone
+
 
 # dabin
 # User : 인증 / 식별 정보만 저장
 class User(Base):
     __tablename__ = "users"  # MySql에서 작성한 users테이블과 매핑 -> PG
 
-    id = Column(             # id Query
-        BigInteger,          # BIGINT -> PostgreSQL (PG)
-        primary_key=True,    # PRIMARY_KEY
-        autoincrement=True  #postgres는 없는게아니라 꼭있어야한다네요 -hyunjun
+    id = Column(  # id Query
+        BigInteger,  # BIGINT -> PostgreSQL (PG)
+        primary_key=True,  # PRIMARY_KEY
+        autoincrement=True,  # postgres는 없는게아니라 꼭있어야한다네요 -hyunjun
     )
 
-    email = Column(          # email Query
-        String(255),         # VARCHAR
-        unique=True,         # UNIQUE
-        nullable=False       # NOT NULL
+    email = Column(  # email Query
+        String(255), unique=True, nullable=False  # VARCHAR  # UNIQUE  # NOT NULL
     )
-    
-    username = Column(       # username Query
-        String(50),          # VARCHAR
-        unique=True,         # UNIQUE
-        nullable=False       # NOT NULL
+
+    username = Column(  # username Query
+        String(50), unique=True, nullable=False  # VARCHAR  # UNIQUE  # NOT NULL
     )
 
     password = Column(  # passowrd Query
-        String(255),         # VARCHAR
-        nullable=False       # NOT NULL 
+        String(255), nullable=False  # VARCHAR  # NOT NULL
     )
     # nickname user_info(front와 이름통일 필요)로 이전 - hyunjun
 
-    created_at = Column(          # created_at Query        
+    created_at = Column(  # created_at Query
         DateTime(timezone=True),
-        nullable=False,           # NOT NULL
-        default=lambda: datetime.now(timezone.utc) # DEFAULT CURRENT_TIMESTAMP -> 
+        nullable=False,  # NOT NULL
+        default=lambda: datetime.now(timezone.utc),  # DEFAULT CURRENT_TIMESTAMP ->
     )
     # 개발편의성 updated_at / 디버깅 , front UX, 병렬요청 충돌 방지?
     # updated_at = Column(
@@ -53,7 +58,7 @@ class User(Base):
     # )
 
     # ===================================================
-    # 최소기능구현 후 확장    
+    # 최소기능구현 후 확장
 
     # phone 초기요구필드엔 없음 -hyunjun
     # phone = Column(          # phone Query
@@ -66,15 +71,14 @@ class User(Base):
     #     nullable=False,      # NOT NULL
     #     default=True         # DEFAULT 1 (1 -> True, 0 -> False)
     # )
-    #기초단계 구현 x
+    # 기초단계 구현 x
     # email_verified = Column( # email_verified Query
     #     Boolean,             # TINYINT(1) (1 -> True, 0 -> False)
     #     nullable=True,      # NOT NULL 차후 활성 -hyunjun
     #     default=False        # DEFAULT 0 (1 -> True, 0 -> False)
     # )
 
-
-    # 기본기능 안정화 후 구현 
+    # 기본기능 안정화 후 구현
     # login_fail_count = Column(    # login_fail_count Query
     #     Integer,                  # INT
     #     nullable=False,           # NOT NULL
@@ -91,5 +95,4 @@ class User(Base):
     # ENGINE=InnoDB은 기본값이기 때문에 따로 적을 필요가 없음
     # DEFAULT CHARSET=utf8mb4 또한 기본값이기 때문에 따로 적을 필요가 없음
 
-    
     # user profile, userhealthcondition은 추후 추가 예정

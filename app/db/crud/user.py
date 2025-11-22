@@ -77,9 +77,7 @@ class UserCrud:
     # is_exist 중복
 
     # login
-    # logout
 
-    # #jwt 인증 / oauth2는 router단에서 적용
     # #refresh_token
     # @staticmethod
     # async def update_refresh_token(

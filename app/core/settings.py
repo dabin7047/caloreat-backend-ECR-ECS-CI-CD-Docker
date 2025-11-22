@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
+from datetime import timedelta
 
 
 class Settings(BaseSettings):
@@ -34,6 +35,15 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         return f"postgresql+asyncpg://{self.tmp_db}"  # postgreSQL변경필요
+
+    # token expire
+    @property
+    def access_token_expire(self) -> timedelta:
+        return timedelta(seconds=self.access_token_expire_sec)
+
+    @property
+    def refresh_token_expire(self) -> timedelta:
+        return timedelta(seconds=self.refresh_token_expire_sec)
 
     # # ai_model url
     # @property

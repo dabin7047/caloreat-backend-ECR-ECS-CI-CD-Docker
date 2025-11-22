@@ -34,13 +34,23 @@ class UserUpdate(BaseModel):
     # email_verified : Optional[bool] = None # 이메일 인증 여부 선택입력 -> None이면 미변경 상태 -> 시스템에서 변경할 값
 
 
+# login
+class UserLogin(BaseModel):
+    account: str  # username or email이므로 emailstr금지 -> 무조건 str
+    password: str
+
+
+# -------------------------------------------
+
 # Response schema
 # -> 결합도가 높음 : front_ui, db테이블구조, 기능으로  응답스키마를 3개로 분리
 
 
 # 회원가입 (User)
 class UserInDB(UserBase):
-    id: int  # = Field(..., alias="id")          # 유저의 고유 ID(PK), 유저 식별용으로 필수 -> API 응답 전용 이름 user_id로변환
+    user_id: int = Field(
+        ..., alias="id"
+    )  # 유저의 고유 ID(PK), 유저 식별용으로 필수 -> API 응답 전용 이름 user_id로변환
     created_at: datetime  # = Field(default_factory=lambda : datetime.now(timezone.utc))  #db읽어서 클라이언트 반환
     # provider : str                      # 유저의 가입경로, 로그인 방식 구분용 social 로그인 구현후 활성화
 
@@ -50,6 +60,10 @@ class UserInDB(UserBase):
 
 
 class UserRead(UserInDB):
+    pass
+
+
+class LoginResponse(UserRead):
     pass
 
 

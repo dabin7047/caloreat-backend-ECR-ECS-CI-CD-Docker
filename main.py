@@ -45,7 +45,7 @@ def read_root():
 #     CORSMiddleware,
 #     allow_origins=["*"],  #모든 도메인요청 허용
 #     allow_credentials=True, #자격증명 true일경우에만 응답 노출
-#     allow_methods=["*"], #모든 http메소드 허용 # oauth2 소셜인증 사용시 https만 혀용필요할수도있음
+#     allow_methods=["*"], #모든 http메소드 허용 # 소셜인증 사용시 https만 혀용필요할수도있음
 #     allow_headers=["*"],
 
 # )

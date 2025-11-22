@@ -32,7 +32,7 @@ hyperframe==6.1.0
     # via h2
 idna==3.11
     # via anyio
-jwt==1.4.0
+PyJWT==2.8.0    #jwt==1.4.0 deprecated
     # via backend (pyproject.toml)
 passlib==1.7.4
     # via backend (pyproject.toml)

@@ -11,10 +11,14 @@ class Settings(BaseSettings):
     db_name: str = Field(..., alias="DB_NAME")  # caloreat
 
     # JWT settings
-    # secret_key: str = Field(..., alias="SECRET_KEY")
-    # jwt_algo: str = Field("HS256", alias="JWT_ALGORITHM")
-    # access_token_expire_sec: int = Field(900, alias="ACCESS_TOKEN_EXPIRE")
-    # refresh_token_expire_sec: int = Field(604800, alias="REFRESH_TOKEN_EXPIRE")
+    secret_key: str = Field(..., alias="SECRET_KEY")
+    jwt_algo: str = Field("HS256", alias="JWT_ALGORITHM")
+    access_token_expire_sec: int = Field(
+        ..., alias="ACCESS_TOKEN_EXPIRE"
+    )  # 15분 (900초)
+    refresh_token_expire_sec: int = Field(
+        ..., alias="REFRESH_TOKEN_EXPIRE"
+    )  # 7일(604800)
 
     class Config:
         env_file = ".env.dev"

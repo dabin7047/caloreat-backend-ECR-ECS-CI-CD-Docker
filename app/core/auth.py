@@ -7,6 +7,9 @@ from typing import Optional
 import uuid
 from fastapi.security import OAuth2PasswordBearer
 
+# auth : 요청상태만 책임
+# -쿠키없음 / -토큰 유무 / -로그인 옵션 여부 판단 / verify_token 호출
+
 
 # cookies
 def set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:

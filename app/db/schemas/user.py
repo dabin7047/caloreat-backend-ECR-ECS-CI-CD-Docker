@@ -63,6 +63,18 @@ class UserRead(UserInDB):
     pass
 
 
+class UserDetailRead(BaseModel):
+    id: int
+    username: str
+    email: str
+    created_at: datetime
+    # height: float | None  // profile, condition 기능 추가후 생성
+    # weight: float | None
+    # diabetes: bool | None
+    # 등 필요한 것만 선택적으로 추가
+
+
+# 로그인 반환 (쿠키방식이라 토큰 필요 x)
 class LoginResponse(UserRead):
     pass
 

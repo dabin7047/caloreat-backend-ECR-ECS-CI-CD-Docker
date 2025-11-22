@@ -1,10 +1,11 @@
 from fastapi import Request, Response, HTTPException, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
-# from jwt import ExpiredSignatureError, InvalidTokenError
+from app.db.crud.user import UserCrud
+from app.db.database import get_db
 from app.core.settings import settings
 from app.core.jwt_context import verify_token
 import jwt
-import uuid
 
 
 # auth : 요청상태만 책임
@@ -34,15 +35,34 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
     )
 
 
-# 인증된 유저인지 여부
+# 인증된 유저인지 여부(Authentication)
 # Request 에서 user_id 추출 // source code -> 불필요 중복처리제거
-async def get_user_id(request: Request):
+async def get_user_id(request: Request) -> int:
     access_token = request.cookies.get("access_token")
+    print("🔥 Received access_token from client:", access_token)
+    print(
+        "🔥 len(access_token from client):", len(access_token) if access_token else None
+    )
     if not access_token:
         raise HTTPException(status_code=401)
 
-    user_id = verify_token(access_token)
+    user_id = int(verify_token(access_token))
+    print("getuserid:", user_id, type(user_id))
     return user_id
+
+
+# 로그인한 유저확인(본인 정보확인용도)
+async def get_current_user(request: Request, db: AsyncSession = Depends(get_db)):
+    user_id = await get_user_id(request)
+    print("currnetUser_id:", user_id)
+    # db조회
+    current_user = await UserCrud.get_user_by_id(db, user_id)
+    if not current_user:
+        raise HTTPException(status_code=404, detail="유저 없음")
+
+    return current_user
+
+    # jwt 검증
 
 
 # token based uesr identification

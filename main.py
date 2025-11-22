@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from app.db.database import Base, async_engine
 from app.db import models
 from app.routers import router
+from app.core.settings import settings
 
 # lifespan
 from contextlib import asynccontextmanager
@@ -27,6 +28,7 @@ async def lifespan(app: FastAPI):
     await async_engine.dispose()  # DB 연결 종료
 
 
+print("SECRET_KEY:", settings.secret_key)
 app = FastAPI(lifespan=lifespan)
 
 # 라우터 등록

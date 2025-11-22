@@ -28,9 +28,10 @@ def verify_pwd(plain_password: str, hashed_pasword: str):
 # 2) 토큰 생성
 # 공통 JWT 생성기       // uid =sub(subject) 토큰의주인,주체 // sub=DB PK(1,2,3...)
 def create_token(sub: int, expires_delta: timedelta, **kwargs) -> str:
+    print("TOKEN CREATE KEY:", settings.secret_key)
     expire = datetime.now(timezone.utc) + expires_delta
-    # payload 변수로 혼동방지
-    payload = {"exp": expire, "sub": sub}
+    # payload 변수로 혼동방지   //troubleshooting : expire.timestamp -> float -> int(expire.timestamp)
+    payload = {"exp": int(expire.timestamp()), "sub": str(sub)}
     payload.update(kwargs)  # kwargs- refresh token- jti :(random uuid)
     encoded_jwt = jwt.encode(payload, settings.secret_key, algorithm=settings.jwt_algo)
     return encoded_jwt
@@ -54,16 +55,20 @@ def create_refresh_token(sub: int) -> str:
 # 3) 토큰 검증(token verification)
 # decode: JWT str -> dict(payload) // PyJWT가 서명검증+ exp검증 수행
 def decode_token(token: str) -> dict:
-    return jwt.decode(
-        token,
-        settings.secret_key,
-        algorithms=[settings.jwt_algo],
-    )
+    print("TOKEN DECODE KEY:", settings.secret_key)
+    print("settings.jwt_algo =", settings.jwt_algo, repr(settings.jwt_algo))
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algo])
+        return payload
+    except Exception as e:
+        print("🔥 JWT DECODE ERROR:", type(e).__name__, str(e))
+        raise
 
 
 # verify_token
 # + 예외처리 auth예외처리 제외 verify_token에서 일괄 관리
-def verify_token(token: str) -> int:
+def verify_token(token: str):
+    print("RAW TOKEN BYTES:", list(token.encode()))
     try:
         payload = decode_token(token)
 
@@ -84,4 +89,4 @@ def verify_token(token: str) -> int:
     if sub is None:
         raise HTTPException(status_code=401, detail="토큰 데이터가 올바르지 않습니다")
 
-    return
+    return sub

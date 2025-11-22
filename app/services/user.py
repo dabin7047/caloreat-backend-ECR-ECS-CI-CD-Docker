@@ -124,6 +124,8 @@ class UserService:
         # token
         access_token = create_access_token(db_user.id)
         refresh_token = create_refresh_token(db_user.id)
+        print("len(access_token):", len(access_token))
+        print("len(refresh_token):", len(refresh_token))
 
         return db_user, access_token, refresh_token
 

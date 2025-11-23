@@ -13,4 +13,9 @@ from app.services.user import UserService
 from typing import Annotated, List
 
 
-router = APIRouter(prefix="/user-heatlh-conditions", tags=["HealthCondition"])
+router = APIRouter(prefix="user/me/heatlh-conditions", tags=["HealthCondition"])
+
+# POST /users/me/health-conditions
+# GET /users/me/health-conditions – 컨디션 데이터 조회
+
+# PATCH /users/me/health-conditions – 특정 필드만 수정

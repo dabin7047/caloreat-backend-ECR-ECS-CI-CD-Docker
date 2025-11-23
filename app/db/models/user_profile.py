@@ -17,5 +17,7 @@ class UserProfile(Base):
     age = Column(Integer, nullable=True)
     height = Column(Float, nullable=True)  # postgres DOUBLE PRECISION
     weight = Column(Float, nullable=True)
+    goal_type = Column(String(100), nullable=True)
+    # meal_pattern = Column(String(100), nullable=True) # 식습관패턴
 
     users = relationship("User", back_populates="user_profiles")

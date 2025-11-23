@@ -14,3 +14,7 @@ from typing import Annotated, List
 
 # URL path 언더스코어 금지원칙 user_profile -> user-profile
 router = APIRouter(prefix="/user-profiles", tags=["UserProfile"])
+
+# GET /users/me/profile – 프로필 하나 조회
+
+# PATCH /users/me/profile – 특정 필드만 수정

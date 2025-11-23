@@ -3,4 +3,6 @@ from app.db.database import Base
 
 
 class HealthConditionCrud:
-    pass
+    @staticmethod
+    async def create_profile():
+        pass

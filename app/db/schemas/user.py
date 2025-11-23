@@ -21,13 +21,21 @@ class UserCreate(UserBase):
 # 회원 정보 수정용 스키마
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None  # mutable?
-    username: Optional[str] = None  # mutable? not mutable
-    password: Optional[str] = None
+    username: Optional[str] = None  # immutable
+
     # phone삭제
     # 확장(profile,condition으로 뺄지 합칠지 고민필요)
-    # provider : Optional[str] = None        # 가입경로 선택입력 -> 기본값 이미 DB에 있음
+    # provider: str = "local"       # 가입경로 선택입력 -> 기본값 이미 DB에 있음
     # is_activate : Optional[bool] = None    # 활성화 여부 선택입력 -> None이면 미변경 상태 -> 수정만 허용
     # email_verified : Optional[bool] = None # 이메일 인증 여부 선택입력 -> None이면 미변경 상태 -> 시스템에서 변경할 값
+
+    # is_deleted: bool = False
+
+
+# front request body 검증용
+class PasswordUpdate(BaseModel):
+    old_password: str
+    new_password: str
 
 
 # login

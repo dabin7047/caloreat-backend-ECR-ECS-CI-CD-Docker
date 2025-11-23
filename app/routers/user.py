@@ -10,6 +10,7 @@ from app.db.schemas.user import (
     UserLogin,
     LoginResponse,
     LogoutResponse,
+    PasswordUpdate,
 )
 from app.db.database import get_db
 from app.db.models.user import User
@@ -73,6 +74,18 @@ async def update_user_by_id(
 ):
     result = await UserService.update_user(db, current_user_id, user)
     return result
+
+
+# 비밀번호 변경
+@router.patch("/me/password", description="비밀번호변경")
+async def change_my_pw(
+    pw_data: PasswordUpdate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+
+    await UserService.update_pw(db, current_user, pw_data)
+    return {"msg": "비밀번호 변경 완료"}
 
 
 # delete_user 개인 회원탈퇴  // 프론트 bool값

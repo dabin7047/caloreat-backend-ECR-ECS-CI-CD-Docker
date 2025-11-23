@@ -21,10 +21,12 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         try:
             yield session
-            await session.commit()
+            # 엔진 commit()삭제
         except Exception:
-            await session.rollback()  # 오류 발생 시 DB 작업취소 transaction
+            await session.rollback()  # 최종 안전장치 : pending중인 DB 작업취소
             raise  # 오류 발생 표시
+        # finally:
+        #     await session.close()     #코드 재활용성 : with 없을때
 
 
 # DB연결 경로 확인 (dev) -삭제예정

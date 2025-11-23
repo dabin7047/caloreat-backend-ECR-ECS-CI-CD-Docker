@@ -8,18 +8,16 @@ from fastapi import HTTPException
 
 # CRUD = query
 class UserCrud:
-
-    # commit 은 enigne에서 일괄관리 + rollback까지
-    # crud에선 flush()까지 관리 create는 refresh(obj)까지 허용
+    # crud 에선 db query만 관리
+    # commit, refresh, rollback 은 service에서 개별관리
+    # crud에선 add(), flush()까지 관리
 
     # create
     @staticmethod
     async def create_user(db: AsyncSession, user: UserCreate) -> User:
         db_user = User(**user.model_dump())
         db.add(db_user)
-        # create만 예외적으로 허용
         await db.flush()  # PK생성, DB내 query insert
-        await db.refresh(db_user)  # 새로입력된값을 다시 반환위해
         return db_user
         # refresh는 SELECT를 다시 쏘는 비용이 들어간다 → 오버헤드발생
 

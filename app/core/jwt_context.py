@@ -85,3 +85,12 @@ def verify_token(token: str):
         raise HTTPException(status_code=401, detail="토큰 데이터가 올바르지 않습니다")
 
     return sub
+
+
+def verify_refresh_token(token: str) -> dict:
+    payload = decode_token(token)
+
+    if "sub" not in payload or "jti" not in payload:
+        raise HTTPException(401, "Refresh Token 구조 오류")
+
+    return payload

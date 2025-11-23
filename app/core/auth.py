@@ -14,8 +14,10 @@ import jwt
 
 
 # cookies : cookie에서 access_token 꺼내기
-# logout 은 router에서 토큰삭제로 대체
-def set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+# 로그인시 access_token, refresh_token발급
+def set_login_cookies(
+    response: Response, access_token: str, refresh_token: str
+) -> None:
     # 쿠키가 어떤 상황에서 전송되는지 제어하는 보안기능
     response.set_cookie(
         key="access_token",
@@ -32,6 +34,18 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
         secure=False,
         samesite="Lax",
         max_age=int(settings.refresh_token_expire.total_seconds()),
+    )
+
+
+# 만료토큰 재발급용 access_token만 갱신 (refreshAccess endpoint)
+def set_access_cookie(response: Response, access_token: str):
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        max_age=int(settings.access_token_expire.total_seconds()),
     )
 
 

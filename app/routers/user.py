@@ -17,7 +17,7 @@ from app.db.models.user import User
 from app.services.user import UserService
 from app.db.crud.user import UserCrud
 
-from app.core.auth import set_auth_cookies
+from app.core.auth import set_login_cookies, set_access_cookie
 
 from typing import Annotated, List
 
@@ -43,7 +43,7 @@ async def login(
 ):  # response fastapi가 자동으로 dependency 주입
     result = await UserService.login(db, user)
     db_user, access_token, refresh_token = result
-    set_auth_cookies(
+    set_login_cookies(
         response, access_token, refresh_token
     )  # token은 body x 쿠키로 관리(localstorage 필요 x)/ CSRF 취약점 존재
     return db_user
@@ -112,3 +112,16 @@ async def logout(request: Request, response: Response):
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
     return {"success": True}
+
+
+# refresh (access_token 만료 후 재발급) / a
+@router.post("/refreshAccess")
+async def refresh(request: Request, response: Response):
+    refresh_token = request.cookies.get("refresh_token")
+    if not refresh_token:
+        raise HTTPException(401, "refresh token 없음")
+
+    new_access_token = await UserService.refresh(refresh_token)
+    set_access_cookie(response, new_access_token)
+
+    return {"msg": "새 토큰 발급 완료"}

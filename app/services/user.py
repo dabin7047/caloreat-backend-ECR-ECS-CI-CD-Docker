@@ -5,6 +5,8 @@ from app.core.jwt_context import (
     verify_pwd,
     create_access_token,
     create_refresh_token,
+    verify_token,
+    verify_refresh_token,
 )
 
 # from app.core.security import hash_password # security.py 파일 만든뒤 활성화
@@ -180,3 +182,12 @@ class UserService:
         # )
         # await db.commit() 로그인과정에서 뭔가를DB에 변경 했을때만필요(refresh_token rotation)
         # await db.refresh(db_user)
+
+    # refresh_token
+    # (별도 endpoints용 ) -별도유지 or rotation 적용하면 삭제
+    @staticmethod
+    async def refresh(refresh_token: str):
+        payload = verify_refresh_token(refresh_token)
+        user_id = int(payload.get("sub"))
+        new_access_token = create_access_token(user_id)
+        return new_access_token

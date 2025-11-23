@@ -1,27 +1,28 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.auth import get_current_user
+from app.core.auth import get_current_user, get_user_id
 from app.db.schemas.user import (
     UserRead,
     UserCreate,
     UserUpdate,
+    UserDetailRead,
     UserLogin,
     LoginResponse,
-    UserDetailRead,
+    LogoutResponse,
 )
 from app.db.database import get_db
 from app.db.models.user import User
 from app.services.user import UserService
 from app.db.crud.user import UserCrud
 
-
 from app.core.auth import set_auth_cookies
-
 
 from typing import Annotated, List
 
 router = APIRouter(prefix="/users", tags=["User"])
+
+# 최대한 restful api설계방식
 
 
 # 회원가입 - JWT 로그인 - /me 인증확인 - 수정 - 삭제 - 중복체크
@@ -34,7 +35,7 @@ async def signup(user: UserCreate, db: AsyncSession = Depends(get_db)) -> User:
     return db_user
 
 
-# login ( 유저정보만 클라이언트로 반환)
+# login (유저정보만 클라이언트로 반환) #관리자폐이지 추가고려시 (admin uid:1, 모든권한 슈퍼계정)
 @router.post("/login", response_model=LoginResponse)
 async def login(
     user: UserLogin, response: Response, db: AsyncSession = Depends(get_db)
@@ -49,7 +50,7 @@ async def login(
 
 # 사용자 조회 (현재로그인된 사용자 본인 정보조회)
 # get_current_user 의존성 주입
-@router.get("/me", response_model=UserDetailRead)
+@router.get("/me", response_model=UserDetailRead, summary="내정보 조회")
 async def read_me(current_user=Depends(get_current_user)):
     return current_user
 
@@ -62,21 +63,34 @@ async def read_me(current_user=Depends(get_current_user)):
 #     return users
 
 
-# logout
+# user update (로그인된 id만 수정가능) endpoint -> /me로 통일(정적세그먼트)
+# /{user_id}임의접근 x -> /me 본인정보만
+@router.patch("/me", response_model=UserDetailRead, summary="내정보 수정")
+async def update_user_by_id(
+    user: UserUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user_id: User = Depends(get_user_id),  # 현재로그인된 본인정보
+):
+    result = await UserService.update_user(db, current_user_id, user)
+    return result
 
-# # # delete_user
+
+# delete_user 개인 회원탈퇴  // 프론트 bool값
+# current_user_id 반환 // 추후 soft delete 추가 고려
+# delete response schema 추가 고려
+@router.delete("/me", summary="개인회원 탈퇴")
+async def delete_me(
+    current_user_id: int = Depends(get_user_id), db: AsyncSession = Depends(get_db)
+):
+    await UserService.delete_user(db, current_user_id)
+    return {"deleted": True, "deleted_user_id": current_user_id}
+
+
+# # delete_user 관리자용
 # @router.delete("/delete/{user_id}")
-# async def delete_user(user_id:int,
-#                       db:AsyncSession=Depends(get_db)):
-#     result = await UserCrud.delete_user_by_id(user_id,db)
-#     return {"msg":"회원삭제","deleted":result}
-# # user update
-# # @router.put("/update/{user_id}")
-# # async def update_user_by_id(user:UserUpdate,
-# #                             user_id:int,
-# #                             db:AsyncSession=Depends(get_db)):
-# #     result = await UserCrud.update_user_by_id(user,user_id,db)
-# #     return result
+# async def delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
+#     result = await UserCrud.delete_user_by_id(user_id, db)
+#     return {"msg": "회원삭제", "deleted": result}
 
 
 # logout
@@ -84,4 +98,4 @@ async def read_me(current_user=Depends(get_current_user)):
 async def logout(request: Request, response: Response):
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
-    return True
+    return {"success": True}

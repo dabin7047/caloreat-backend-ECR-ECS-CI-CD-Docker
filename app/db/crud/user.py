@@ -3,19 +3,21 @@ from sqlalchemy import select
 from app.db.models.user import User
 from app.db.schemas.user import UserCreate, UserUpdate
 from typing import Optional, List
+from fastapi import HTTPException
 
 
 # CRUD = query
 class UserCrud:
 
     # commit 은 enigne에서 일괄관리 + rollback까지
-    # crud에선 flush()까지 관리
+    # crud에선 flush()까지 관리 create는 refresh(obj)까지 허용
 
     # create
     @staticmethod
     async def create_user(db: AsyncSession, user: UserCreate) -> User:
         db_user = User(**user.model_dump())
         db.add(db_user)
+        # create만 예외적으로 허용
         await db.flush()  # PK생성, DB내 query insert
         await db.refresh(db_user)  # 새로입력된값을 다시 반환위해
         return db_user
@@ -50,28 +52,24 @@ class UserCrud:
 
     # update (회원정보수정) : setattr + exclude_unset=True
     @staticmethod
-    async def update_user_by_id(
-        db: AsyncSession, user_id: int, user: UserUpdate
-    ) -> User | None:
-        db_user = await db.get(User, user_id)
-        if db_user:
-            # patch(요청에서 전달된 필드만 업데이트하겠다) {"email":"aa@naver.com"}
-            update_user = user.model_dump(exclude_unset=True)
-            for i, j in update_user.items():
-                setattr(db_user, i, j)  # orm 객체수정됨
-            await db.flush()  # sql업데이트 반영
-            return db_user
-        return None
+    async def update_user(db: AsyncSession, db_user, update_user: dict) -> User | None:
+        for i, j in update_user.items():
+            setattr(db_user, i, j)  # orm 객체수정, Orm state-> dirty
+        await db.flush()  # sql문 쿼리생성, data 업데이트
+        return db_user
 
     # delete (회원탈퇴(삭제))
+    # 트랜잭션고려 예외처리먼저- 구조변경
     @staticmethod
-    async def delete_user_by_id(db: AsyncSession, user_id: int):
+    async def delete_user_by_id(db: AsyncSession, user_id: int) -> bool:
         db_user = await db.get(User, user_id)
-        if db_user:
-            await db.delete(db_user)
-            await db.flush()  # db에 바로반영/ 롤백가능
-            return db_user
-        return None
+        # 실패시 조기종료
+        if not db_user:
+            raise HTTPException(status_code=404, detail="없는 회원 입니다")
+
+        await db.delete(db_user)
+        await db.flush()  # db에 쿼리문날림/ 롤백가능
+        return True
 
     # 회원가입 추가기능
     # is_exist 중복

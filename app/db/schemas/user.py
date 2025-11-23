@@ -20,15 +20,11 @@ class UserCreate(UserBase):
 
 # 회원 정보 수정용 스키마
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = (
-        None  # 이메일 선택입력 -> None이면 변경하지 않음 -> 수정 시 필수 아님
-    )
-    username: Optional[str] = (
-        None  # 유저이름 선택입력 -> None이면 변경하지 않음 -> 부분수정 대비
-    )
+    email: Optional[EmailStr] = None  # mutable?
+    username: Optional[str] = None  # mutable? not mutable
     password: Optional[str] = None
     # phone삭제
-    # 확장
+    # 확장(profile,condition으로 뺄지 합칠지 고민필요)
     # provider : Optional[str] = None        # 가입경로 선택입력 -> 기본값 이미 DB에 있음
     # is_activate : Optional[bool] = None    # 활성화 여부 선택입력 -> None이면 미변경 상태 -> 수정만 허용
     # email_verified : Optional[bool] = None # 이메일 인증 여부 선택입력 -> None이면 미변경 상태 -> 시스템에서 변경할 값
@@ -52,7 +48,7 @@ class UserInDB(UserBase):
         ..., alias="id"
     )  # 유저의 고유 ID(PK), 유저 식별용으로 필수 -> API 응답 전용 이름 user_id로변환
     created_at: datetime  # = Field(default_factory=lambda : datetime.now(timezone.utc))  #db읽어서 클라이언트 반환
-    # provider : str                      # 유저의 가입경로, 로그인 방식 구분용 social 로그인 구현후 활성화
+    # provider : str      # 유저의 가입경로, 로그인 방식 구분용 social 로그인 구현후 활성화
 
     class Config:
         from_attributes = True  # SQLAlchemy 모델을 바로 응답 모델로 변환 가능
@@ -77,6 +73,10 @@ class UserDetailRead(BaseModel):
 # 로그인 반환 (쿠키방식이라 토큰 필요 x)
 class LoginResponse(UserRead):
     pass
+
+
+class LogoutResponse(BaseModel):
+    success: bool = True
 
 
 # ===============================================================

@@ -61,7 +61,7 @@ def decode_token(token: str) -> dict:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algo])
         return payload
     except Exception as e:
-        print("🔥 JWT DECODE ERROR:", type(e).__name__, str(e))
+        print("JWT DECODE ERROR:", type(e).__name__, str(e))
         raise
 
 

@@ -16,6 +16,7 @@ Base = declarative_base()
 
 
 # get_db
+# transaction: update/ delete db이상(삽,삭,갱)발생, commit은 service에서 개별관리
 async def get_db():
     async with AsyncSessionLocal() as session:
         try:
@@ -30,4 +31,4 @@ async def get_db():
 print("DB URL:", settings.database_url)
 
 
-# middleware 추가여부
+# middleware 추가여부 (refresh_token rotation)

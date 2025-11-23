@@ -70,41 +70,42 @@ class UserService:
         users = await UserCrud.get_all_user(db)
         return users
 
-    # update
+    # update (updated_at 추가 고려)
     @staticmethod
-    async def update_user(db: AsyncSession, user_id: int, user_data: UserUpdate):
-        hashed_password = None
-        if user_data.password:
-            hashed_password = user_data.password
-            # hashed_password = hash_password(user_data.password)
+    async def update_user(db: AsyncSession, current_user_id: int, user: UserUpdate):
+        # db 유효성 검사
+        db_user = await UserCrud.get_user_by_id(db, current_user_id)
+        if not db_user:
+            raise HTTPException(404, "Not found")
 
-        # 확인필요
-        updated_user = await UserCrud.update_user_by_id(
-            db,
-            user_id=user_id,
-            user_name=user_data.username,
-            email=user_data.email,
-            password=hashed_password,
-        )
+            # patch(요청에서 전달된 필드만 업데이트하겠다) {"email":"aa@naver.com"}
+        update_user = user.model_dump(exclude_unset=True)
+
+        if user.password:
+            update_user["password"] = get_pwd_hash(user.password)
+
+        #
+        updated_user = await UserCrud.update_user(db, db_user, update_user)
 
         if not updated_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with id {user_id} not Found",
+                detail=f"User with id not Found",
             )
 
         return updated_user
 
     # delete
     @staticmethod
-    async def delete_user(db: AsyncSession, user_id: int):
-        is_deleted = await UserCrud.delete_user_by_id(db, user_id)
-        if not is_deleted:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with id {user_id} not found.",
-            )
-        return {"message": "User deleted successfully"}
+    async def delete_user(db: AsyncSession, user_id: int) -> bool:
+        try:
+            await UserCrud.delete_user_by_id(db, user_id)
+            await db.commit()
+            return True
+
+        except Exception:
+            await db.rollback()
+            raise
 
     # login
     @staticmethod
@@ -129,7 +130,7 @@ class UserService:
 
         return db_user, access_token, refresh_token
 
-        # # refresh_token rotation 추가시 활성화
+        # # refresh_token rotation 추가시 활성화(미들웨어사용 토큰 자동갱신)
         # updated_user = await UserCrud.update_refresh_token_id(
         #     db, db_user.user_id, refresh_token
         # )

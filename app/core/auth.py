@@ -39,10 +39,8 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
 # Request 에서 user_id 추출 // source code -> 불필요 중복처리제거
 async def get_user_id(request: Request) -> int:
     access_token = request.cookies.get("access_token")
-    print("🔥 Received access_token from client:", access_token)
-    print(
-        "🔥 len(access_token from client):", len(access_token) if access_token else None
-    )
+    print("Received access_token from client:", access_token)
+    print("len(access_token from client):", len(access_token) if access_token else None)
     if not access_token:
         raise HTTPException(status_code=401)
 

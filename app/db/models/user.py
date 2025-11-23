@@ -42,6 +42,9 @@ class User(Base):
         nullable=False,  # NOT NULL
         default=lambda: datetime.now(timezone.utc),  # DEFAULT CURRENT_TIMESTAMP ->
     )
+
+    # profile, condition에 cascade (orphan data방지) 고려 필요
+
     # 개발편의성 updated_at / 디버깅 , front UX, 병렬요청 충돌 방지?
     # updated_at = Column(
     #     DateTime(timezone=True),
@@ -89,10 +92,5 @@ class User(Base):
     #     DateTime,                 # DATETIME
     #     nullable=True             # NULL
     # )
-
-    # Postgres 사용예정입니다 - hyujnun
-    # ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    # ENGINE=InnoDB은 기본값이기 때문에 따로 적을 필요가 없음
-    # DEFAULT CHARSET=utf8mb4 또한 기본값이기 때문에 따로 적을 필요가 없음
 
     # user profile, userhealthcondition은 추후 추가 예정

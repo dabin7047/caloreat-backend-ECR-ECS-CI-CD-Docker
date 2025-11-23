@@ -2,5 +2,5 @@
 from app.db.database import Base
 
 
-class UserConditions(Base):
+class HealthConditionCrud:
     pass

@@ -11,6 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.sql import func
 from app.db.database import Base
 from datetime import datetime, timezone
+from sqlalchemy.orm import relationship
 
 
 # dabin
@@ -42,6 +43,8 @@ class User(Base):
         nullable=False,  # NOT NULL
         default=lambda: datetime.now(timezone.utc),  # DEFAULT CURRENT_TIMESTAMP ->
     )
+
+    user_profiles = relationship("UserProfile", back_populates="users")
 
     # profile, condition에 cascade (orphan data방지) 고려 필요
 

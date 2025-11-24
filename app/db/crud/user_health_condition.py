@@ -2,5 +2,7 @@
 from app.db.database import Base
 
 
-class UserConditions(Base):
-    pass
+class HealthConditionCrud:
+    @staticmethod
+    async def create_profile():
+        pass

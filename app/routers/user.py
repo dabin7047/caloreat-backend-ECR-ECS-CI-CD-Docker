@@ -75,6 +75,7 @@ async def login(
 async def read_me(current_user=Depends(get_current_user)):
     return current_user
 
+# current_user-> 쿠키상태유지
 
 # # 모든 사용자조회(관리자용)  : is_admin or username==admin 필요하면 추가
 # # service logic 생성필요

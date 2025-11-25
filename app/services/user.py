@@ -171,15 +171,21 @@ class UserService:
         else:
             db_user = await UserCrud.get_user_by_username(db, account)
 
-        if not db_user or not verify_pwd(user.password, db_user.password):
-            raise HTTPException(status_code=401, detail="잘못된 이메일 또는 비밀번호")
-
+        #없는 아이디, 이메일
+        if not db_user:
+            raise HTTPException(status_code=400, detail="이메일 또는 아이디를 확인해주세요")    
+        #비밀번호 불일치 시
+        if not verify_pwd(user.password, db_user.password):
+            raise HTTPException(status_code=401, detail="비밀번호를 확인해주세요")   
+        
         # token
         access_token = create_access_token(db_user.id)
         refresh_token = create_refresh_token(db_user.id)
 
         return db_user, access_token, refresh_token
-
+        
+        
+        # login
         # # refresh_token rotation 추가시 활성화(미들웨어사용 토큰 자동갱신)
         # updated_user = await UserCrud.update_refresh_token_id(
         #     db, db_user.user_id, refresh_token

@@ -25,6 +25,7 @@ click==8.3.1
     #   backend (pyproject.toml)
     #   uvicorn
 cryptography==46.0.3
+
     # via backend (pyproject.toml)
 dnspython==2.8.0
     # via email-validator

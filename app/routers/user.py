@@ -26,8 +26,9 @@ router = APIRouter(prefix="/users", tags=["User"])
 
 # 최대한 restful api설계방식
 
-@router.get("/checkemail",response_model=MessageResponse)
-async def checkemail(email: str, db: AsyncSession = Depends(get_db))->User:
+
+@router.get("/checkemail", response_model=MessageResponse)
+async def checkemail(email: str, db: AsyncSession = Depends(get_db)) -> User:
     existing_email = await UserCrud.get_user_by_email(db, email)
     if existing_email:
         raise HTTPException(
@@ -36,8 +37,9 @@ async def checkemail(email: str, db: AsyncSession = Depends(get_db))->User:
         )
     return {"message": "사용 가능한 이메일입니다"}
 
-@router.get("/checkid",response_model=MessageResponse)
-async def checkemail(id: str, db: AsyncSession = Depends(get_db))->User:
+
+@router.get("/checkid", response_model=MessageResponse)
+async def checkemail(id: str, db: AsyncSession = Depends(get_db)) -> User:
     existing_id = await UserCrud.get_user_by_id(db, id)
     if existing_id:
         raise HTTPException(
@@ -45,6 +47,7 @@ async def checkemail(id: str, db: AsyncSession = Depends(get_db))->User:
             detail="이미 사용중인 아이디입니다",
         )
     return {"message": "사용 가능한 아이디입니다"}
+
 
 # 회원가입 - JWT 로그인 - /me 인증확인 - 수정 - 삭제 - 중복체크
 # signup
@@ -74,6 +77,7 @@ async def login(
 @router.get("/me", response_model=UserRead, summary="내정보 조회")
 async def read_me(current_user=Depends(get_current_user)):
     return current_user
+
 
 # current_user-> 쿠키상태유지
 

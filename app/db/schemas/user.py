@@ -10,7 +10,7 @@ from typing import Optional
 class UserBase(BaseModel):
     email: EmailStr
     username: str
-    nickname : str | None = None        # 닉네임 선택입력 -> Null허용
+    nickname: str | None = None  # 닉네임 선택입력 -> Null허용
 
 
 ### Request schema
@@ -23,7 +23,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None  # mutable?
     # username: Optional[str] = None  # immutable
-    nickname : str | None = None
+    nickname: str | None = None
 
     # phone삭제
     # 확장(profile,condition으로 뺄지 합칠지 고민필요)
@@ -108,6 +108,7 @@ class UserCondition:
 # email_verified : bool               # 유저의 이메일 인증 여부, True=인증완료, False=인증실패
 # login_fail_count : int              # 유저의 로그인 실패 횟수, locked_until 설정하는데 쓰임
 # locked_until : Optional[datetime]   # 유저의 계정 잠금 해제 시간, 로그인 실패 횟수 초과 시 일시적으로 잠금
+
 
 class MessageResponse(BaseModel):
     message: str

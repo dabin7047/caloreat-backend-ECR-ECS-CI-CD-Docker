@@ -15,7 +15,7 @@ class HealthCondition(Base):
 
     users = relationship("User", back_populates="user_health_conditions")
 
-    __table_args__ =(
+    __table_args__ = (
         ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
     )
 

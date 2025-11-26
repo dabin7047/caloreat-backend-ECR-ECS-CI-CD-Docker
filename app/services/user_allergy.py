@@ -11,9 +11,3 @@ from app.db.crud.user_profile import UserProfileCrud
 
 from enum import Enum
 from datetime import date
-
-# 건강 및 식이 제한정보 user_health_conditions
-
-
-class HealthConditionService:
-    pass

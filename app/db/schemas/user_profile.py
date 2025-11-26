@@ -1,4 +1,3 @@
-from app.db.database import Base
 from pydantic import BaseModel, Field
 from datetime import datetime, date
 from typing import Optional, Annotated

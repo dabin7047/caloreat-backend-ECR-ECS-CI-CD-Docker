@@ -16,4 +16,18 @@ from datetime import date
 
 
 class HealthConditionService:
-    pass
+    @staticmethod
+    async def create_condition(db, current_user_id):
+        pass
+
+    @staticmethod
+    async def read_condition():
+        pass
+
+    @staticmethod
+    async def update_condition():
+        pass
+
+    @staticmethod
+    async def delete_condition(db, current_user_id):
+        pass

@@ -11,7 +11,7 @@ from enum import Enum
 
 # base
 class HealthConditionBase(BaseModel):
-    conditions: list[str] | None = None
+    condition: str
 
 
 # condition_type: str | None = None

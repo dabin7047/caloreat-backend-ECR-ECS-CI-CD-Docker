@@ -19,43 +19,56 @@ from typing import Annotated, List
 
 router = APIRouter(prefix="/users/me/heatlh-conditions", tags=["HealthCondition"])
 
-#
 
-
-# add conditions
+# one conditoin
 @router.post("/", response_model=HealthConditionRead)
 async def create_condition_endpoint(
-    conditions: HealthConditionCreate,
+    condition: HealthConditionCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    user_id = current_user.id
-    new_profile = await HealthConditionService.create_condition(db, user_id, conditions)
-    return new_profile
+    row = await HealthConditionService.create_one_condition(
+        db, current_user.id, condition
+    )
+    return row
 
 
-# read conditions
+# # add conditions
+# @router.post("/", response_model=List[HealthConditionRead])
+# async def create_condition_list_endpoint(
+#     conditions: HealthConditionCreate,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     user_id = current_user.id
+#     new_profile = await HealthConditionService.create_one_condition(db, user_id, conditions)
+#     return new_profile
+
+
+# read one_condition
 @router.get("/", response_model=HealthConditionRead)
 async def get_condition_endpoint(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     user_id = current_user.id
-    db_conditions = await HealthConditionService.get_condition(db, user_id)
-    return db_conditions
-
-
-# update conditions
-@router.patch("/", response_model=HealthConditionRead, summary="건강정보 수정")
-async def update_condition_endpoint(
-    conditions: HealthConditionUpdate,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    user_id = current_user.id
-    db_condition = await HealthConditionService.update_condition(
-        db, user_id, conditions
-    )
+    db_condition = await HealthConditionService.get_condition(db, user_id)
     return db_condition
+
+
+# read_all_conditions
+
+# # update conditions
+# @router.patch("/", response_model=HealthConditionRead, summary="건강정보 수정")
+# async def update_condition_endpoint(
+#     conditions: HealthConditionUpdate,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     user_id = current_user.id
+#     db_condition = await HealthConditionService.update_condition(
+#         db, user_id, conditions
+#     )
+#     return db_condition
 
 
 #

@@ -1,13 +1,14 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.schemas.user_profile import (
-    UserProfileCreate,
-    UserProfileRead,
-    UserProfileUpdate,
+from app.db.schemas.user_health_condition import (
+    HealthConditionCreate,
+    HealthConditionUpdate,
+    HealthConditionRead,
 )
-from app.db.models.user_profile import UserProfile
-from app.db.crud.user_profile import UserProfileCrud
+from app.db.models.user import User
+from app.db.models.user_health_condition import HealthCondition
+from app.db.crud.user_health_condition import HealthConditionCrud
 
 from enum import Enum
 from datetime import date
@@ -17,17 +18,21 @@ from datetime import date
 
 class HealthConditionService:
     @staticmethod
-    async def create_condition(db, current_user_id):
+    async def create_condition(
+        db: AsyncSession, user_id: int, conditions: HealthConditionCreate
+    ):
         pass
 
     @staticmethod
-    async def read_condition():
+    async def read_condition(db: AsyncSession, user_id: int):
         pass
 
     @staticmethod
-    async def update_condition():
+    async def update_condition(
+        db: AsyncSession, user_id: int, conditions: HealthConditionUpdate
+    ):
         pass
 
     @staticmethod
-    async def delete_condition(db, current_user_id):
+    async def delete_condition(db, user_id):
         pass

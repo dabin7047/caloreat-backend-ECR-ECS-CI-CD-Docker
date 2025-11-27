@@ -9,9 +9,9 @@ class HealthCondition(Base):
     id = Column(BigInteger, primary_key=True)
     user_id = Column(BigInteger, unique=True)
 
-    condition_name = Column(String(100), nullable=True)
-    condition_type = Column(String(50), nullable=True)  # disease, allergy, ..
-    severity = Column(String(10), nullable=True)  # low/ medium / high
+    condition = Column(String(100), nullable=True)
+    # condition_type = Column(String(50), nullable=True)  # disease, allergy, ..
+    # severity = Column(String(10), nullable=True)  # low/ medium / high
 
     users = relationship("User", back_populates="user_health_conditions")
 

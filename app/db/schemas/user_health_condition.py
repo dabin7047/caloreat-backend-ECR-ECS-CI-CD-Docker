@@ -12,7 +12,7 @@ from enum import Enum
 # base
 class HealthConditionBase(BaseModel):
     """
-    conditions: 중복선택가능
+    condition: 중복선택가능
     임시 condition codes:
     "high_blood_pressure"
     "low_blood_pressure"
@@ -22,7 +22,7 @@ class HealthConditionBase(BaseModel):
     """
 
     conditions: list[str]
-    # TODO: 나중에 nutri 정보기반 학습, 통계시에는 mapping or 칼럼명 필요할수도 있음
+
     # condition_type: str | None = None
     # allergy는 건강유의사항과 속성이다름 -> ㅇ
 
@@ -47,7 +47,8 @@ class HealthConditionUpdate(HealthConditionBase):
 # read
 class HealthConditionInDB(HealthConditionBase):
     id: int  # TODO: alias 적용 condition_id
-    created_at: datetime
+    # created_at: datetime  # 기간별 상태변화 추적
+    pass
     # updated_at:
 
     class Config:

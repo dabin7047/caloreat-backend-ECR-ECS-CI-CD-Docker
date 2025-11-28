@@ -23,12 +23,12 @@ router = APIRouter(prefix="/users/me/heatlh-conditions", tags=["HealthCondition"
 # one conditoin
 @router.post("/", response_model=HealthConditionRead)
 async def create_condition_endpoint(
-    condition: HealthConditionCreate,
+    conditions: HealthConditionCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     row = await HealthConditionService.create_one_condition(
-        db, current_user.id, condition
+        db, current_user.id, conditions
     )
     return row
 
@@ -73,7 +73,7 @@ async def get_condition_endpoint(
 
 #
 # admin api, 권한주입은 따로 함수를구현 후 생성해야함
-@router.delete("/{user_id}", response_model=HealthConditionRead)
+@router.delete("/{user_id}")
 async def delete_condition_endpoint(user_id: int, db: AsyncSession = Depends(get_db)):
     await HealthConditionService.delete_condition(db, user_id)
     return {"deleted": True, "deleted_user_id": {user_id}}

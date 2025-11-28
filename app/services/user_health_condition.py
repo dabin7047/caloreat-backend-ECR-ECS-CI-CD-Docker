@@ -18,6 +18,7 @@ from datetime import date
 
 
 class HealthConditionService:
+    # create condition
     @staticmethod
     async def create_one_condition(
         db: AsyncSession, user_id: int, condition: HealthConditionCreate
@@ -37,36 +38,6 @@ class HealthConditionService:
         except Exception:
             await db.rollback()
             raise
-
-    # @staticmethod
-    # async def create_condition_bulk(
-    #     db: AsyncSession, user_id: int, conditions: HealthConditionCreate
-    # ):
-    #     # conditions input = None이면 db insert 자체를 차단
-    #     if not conditions.conditions:
-    #         return []
-
-    #     dict_condition
-    #     dict_condition = conditions.model_dump()
-    #     condition_list = conditions.conditions
-    #     dict_conditions = [
-    #         {"user_id": user_id, "conditions": con} for con in condition_list
-    #     ]
-    #     # add user_id from auth context (DB insert용)
-    #     # dict_condition["user_id"] = user_id
-
-    #     try:
-    #         db_condition_rows = await HealthConditionCrud.create_condition_db(
-    #             db, dict_conditions
-    #         )   # type(db_condition_rows)= orm obj list
-
-    #         await db.commit()
-    #         # await db.refresh(db_condition) # bulk insert 에서 refresh-> err
-    #         return db_condition_rows
-
-    #     except Exception:
-    #         await db.rollback()
-    #         raise
 
     # read
     @staticmethod
@@ -95,3 +66,48 @@ class HealthConditionService:
     #     db: AsyncSession, user_id: int, conditions: HealthConditionUpdate
     # ):
     #     pass
+
+    # --------------------------------------------
+    # ProfileForm 함수
+    # --------------------------------------------
+    # create condition bulk (profile 필드추가용)
+    @staticmethod
+    async def create_condition_list(
+        db: AsyncSession, user_id: int, conditions: list[str]
+    ) -> list[str]:
+        """
+        conditions= list[str]
+        """
+        print("conditions:", conditions)
+        # conditions input = None이면 db insert 자체를 차단
+        # profile form 에서 넘어온 컨디션 속성 없으면
+        # condition list 쪼개서  user_id 속성 추가 후 -> crud로 넘김
+        if not conditions:
+            return []  #  input 없을시 빈배열리턴
+
+        # dict_condition = conditions.model_dump()
+        condition_list = conditions
+        dict_conditions = [
+            {"user_id": user_id, "conditions": con} for con in condition_list
+        ]
+        # add user_id from auth context (DB insert용)
+        # dict_condition["user_id"] = user_id
+
+        try:
+            # db 저장위해 crud로 객체넘김
+            db_condition_orm_list = await HealthConditionCrud.create_all_conditions_db(
+                db, dict_conditions
+            )  # type(db_condition_rows)= orm obj list
+
+            # await db.flush()
+            # await db.refresh(db_condition) # bulk insert 에서 refresh-> err
+
+            # response 용 가공 [ormobj] -> list[str]
+            condition_str_list = [orm.conditions for orm in db_condition_orm_list]
+            print("condition_service_to_router", type(condition_str_list))
+
+            return condition_str_list  # 새로 쓰기시 db저장 후 list[str]가공 후 리턴 (profile쪽에서 호출)
+
+        except Exception:
+            await db.rollback()
+            raise

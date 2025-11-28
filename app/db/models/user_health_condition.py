@@ -10,7 +10,7 @@ class HealthCondition(Base):
     user_id = Column(BigInteger, unique=True)
 
     # conditions = Column(JSON, nullable=True)
-    condition = Column(String(100), nullable=True)  # TODO: 이후 AI 연결후 정규화
+    conditions = Column(String(100), nullable=True)  # TODO: 이후 AI 연결후 정규화
 
     users = relationship("User", back_populates="user_health_conditions")
 

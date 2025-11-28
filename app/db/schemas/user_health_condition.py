@@ -11,12 +11,7 @@ from enum import Enum
 
 # base
 class HealthConditionBase(BaseModel):
-    condition: str
-
-
-# condition_type: str | None = None
-# allergy는 건강유의사항과 속성이다름 -> ㅇ
-# severity: str | None = None
+    conditions: str
 
 
 # request client가 보내는 필드
@@ -29,7 +24,7 @@ class HealthConditionCreate(HealthConditionBase):
 
 
 # update
-class HealthConditionUpdate(HealthConditionCreate):
+class HealthConditionUpdate(HealthConditionBase):
     pass
 
 
@@ -48,3 +43,6 @@ class HealthConditionInDB(HealthConditionBase):
 
 class HealthConditionRead(HealthConditionInDB):
     pass
+
+
+#

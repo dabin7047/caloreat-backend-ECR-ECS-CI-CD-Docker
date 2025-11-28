@@ -13,15 +13,23 @@ from app.db.schemas.user_profile import (
     UserProfileCreate,
     UserProfileRead,
     UserProfileUpdate,
+    ProfileFormCreate,
+    ProfileFormRead,
+    ProfileFormUpdate,
 )
 
 from app.services.user import UserService
 from app.services.user_profile import UserProfileService
+from app.services.user_profile_form import ProfileFormService
+
 
 from typing import Annotated, List
 
 # URL path 언더스코어 금지원칙 user_profile -> user-profile
 router = APIRouter(prefix="/users/me/profile", tags=["UserProfile"])
+
+
+# --- profile 단일조회 ---
 
 
 # create (userinfo 입력)    #TODO: birthdate 회원가입 이동 논의필요
@@ -70,4 +78,28 @@ async def update_profile_endpoint(
     return db_profile
 
 
-# delete - profile, condition은 oncascade
+# delete - profile, condition은 oncascade / admin 추가시 구현
+
+
+# --- ProfileForm endpoints ---
+# create
+@router.post(
+    "/form",
+    response_model=ProfileFormCreate,
+    summary="Create:condition field 포함 프로필생성",
+)
+async def create_profile_endpoint(
+    profile_form: ProfileFormCreate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    user_id = current_user.id
+    new_profile = await ProfileFormService.create_profile_form(
+        db, user_id, profile_form
+    )
+    return new_profile
+
+
+# get
+# update
+# delete

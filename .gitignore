@@ -176,4 +176,5 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 .uv.lock
-.DS_Store
+# 맥OS 쓰레기 파일
+.DS_Store 

@@ -16,6 +16,10 @@ router.include_router(user_profile.router)
 router.include_router(user_health_condition.router)
 router.include_router(user_profile_form.router)
 
+# 변경: 도메인만모아서 한 객체로 반환
+__all__ = ["router"]
+
+
 # router.include_router(user_allergy.router) #deleted
 
 

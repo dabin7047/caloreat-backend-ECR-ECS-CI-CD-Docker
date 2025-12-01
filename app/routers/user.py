@@ -40,7 +40,7 @@ async def checkemail(email: str, db: AsyncSession = Depends(get_db)) -> User:
 
 @router.get("/checkid", response_model=MessageResponse)
 async def checkid(id: str, db: AsyncSession = Depends(get_db)) -> User:
-    existing_id = await UserCrud.get_user_by_id(db, id)
+    existing_id = await UserCrud.get_user_by_username(db, id)
     if existing_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

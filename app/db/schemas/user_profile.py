@@ -33,7 +33,7 @@ class UserProfileCreate(UserProfileBase):
 class UserProfileUpdate(BaseModel):
     height: float | None = None
     weight: float | None = None
-    goal_type: str | None = None
+    goal_type: GoalType | None = None
 
     # gender: str | None = None # TODO: 성별은 수정하면안됨?(성전환고려?...)
 
@@ -77,7 +77,7 @@ class ProfileFormCreate(ProfileFormBase):
 class ProfileFormUpdate(BaseModel):
     height: float | None = None
     weight: float | None = None
-    goal_type: str | None = None
+    goal_type: GoalType | None = None
     conditions: list[str] | None = None
 
     # gender: str | None = None # TODO: unrecognized

@@ -1,12 +1,37 @@
-.git
-.gitignore
-.dockerignore
-.venv
-__pycache__
-.pytest_cache
-.idea
+# 가상환경은 컨테이너에 절대 넣지 않음 (용량 크기 때문에)
+venv/
+.venv/
+
+# 파이썬 캐시/바이트코드 제외
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# 로컬 DB/캐시/로그 산출물
+*.sqlite3
+*.log
+
+# 로컬 환경파일(비밀값) 제외 -> 시크릿키 관련 무조건 배포금지
+.env
 .env.*
-!/.env.docker
+*.env
+
+# 도커/배포용으로 관리하는 env 파일만 예외적으로 포함
+!.env.docker
+
+# 개발/테스트 관련 파일 제외 (운영 이미지 불필요)
+tests/
+README.md
+.pytest_cache/
+
+# Git 관련 제외
+.git/
+.gitignore
+.dockerignore
+.idea/
+.vscode/
+
+# 기타 로컬 생성물
+uv.lock
+

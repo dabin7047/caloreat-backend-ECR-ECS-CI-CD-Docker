@@ -2,7 +2,7 @@ name: Caloreat Backend CI
 
 on:
   push:
-    branches: ["dev", "ci-environment"]
+    branches: ["main"]
   pull_request:
     branches: ["dev", "main"]
 
@@ -88,5 +88,3 @@ jobs:
             --service caloreat-service \        # ECS 서비스 이름
             --force-new-deployment \
             --region ap-northeast-2
-
-

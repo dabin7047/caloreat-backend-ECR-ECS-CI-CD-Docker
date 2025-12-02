@@ -84,9 +84,4 @@ jobs:
 
       # 4) ECS 서비스에 새 이미지 배포
       - name: Deploy to ECS
-        run: |
-          aws ecs update-service \
-            --cluster caloreat-cluster \       
-            --service caloreat-service \       
-            --force-new-deployment \
-            --region ap-northeast-2
+        run: aws ecs update-service --cluster caloreat-cluster --service caloreat-service --force-new-deployment --region ap-northeast-2

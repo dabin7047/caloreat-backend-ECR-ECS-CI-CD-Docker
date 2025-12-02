@@ -47,6 +47,8 @@ jobs:
           DB_PORT: 5432
           DB_NAME: caloreat_test
           SECRET_KEY: "test_secret_key"
+          ACCESS_TOKEN_EXPIRE: 900
+          REFRESH_TOKEN_EXPIRE: 604800
         run: |
           uv run pytest
 

@@ -84,7 +84,7 @@ jobs:
       - name: Deploy to ECS
         run: |
           aws ecs update-service \
-            --cluster caloreat-cluster \        # ECS 클러스터 이름
-            --service caloreat-service \        # ECS 서비스 이름
+            --cluster caloreat-cluster \       
+            --service caloreat-service \       
             --force-new-deployment \
             --region ap-northeast-2
